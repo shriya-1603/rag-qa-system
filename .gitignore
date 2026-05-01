@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+.venv/
+venv/
+env/
+
+# Data — raw uploads and built index are local artifacts
+data/raw/
+data/vectorstore/
+
+# OS
+.DS_Store

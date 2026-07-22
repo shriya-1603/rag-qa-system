@@ -7,7 +7,7 @@ def get_embeddings() -> Embeddings:
     if api_key:
         from langchain_google_genai import GoogleGenerativeAIEmbeddings
         return GoogleGenerativeAIEmbeddings(
-            model="models/text-embedding-004",
+            model="text-embedding-004",
             google_api_key=api_key,
         )
     else:

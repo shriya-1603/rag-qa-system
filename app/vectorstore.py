@@ -2,7 +2,7 @@ import os
 from typing import List
 
 from langchain_community.vectorstores import FAISS
-from langchain.schema import Document
+from langchain_core.documents import Document
 
 from app.embeddings import get_embeddings
 from config import VECTORSTORE_DIR
@@ -36,3 +36,13 @@ def add_to_vectorstore(chunks: List[Document]) -> FAISS:
 
 def vectorstore_exists() -> bool:
     return os.path.exists(os.path.join(_index_path(), "index.faiss"))
+
+
+def clear_vectorstore() -> None:
+    index_file = os.path.join(_index_path(), "index.faiss")
+    pkl_file = os.path.join(_index_path(), "index.pkl")
+    if os.path.exists(index_file):
+        os.remove(index_file)
+    if os.path.exists(pkl_file):
+        os.remove(pkl_file)
+

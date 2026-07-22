@@ -3,7 +3,7 @@ import os
 import streamlit as st
 
 from app.ingestion import ingest_file, SUPPORTED_EXTENSIONS
-from app.vectorstore import add_to_vectorstore, load_vectorstore, vectorstore_exists
+from app.vectorstore import add_to_vectorstore, load_vectorstore, vectorstore_exists, clear_vectorstore
 from app.qa_chain import build_qa_chain
 from config import RAW_DIR
 
@@ -538,7 +538,17 @@ with st.sidebar:
         accept_multiple_files=True,
     )
 
+    overwrite = st.checkbox("Overwrite existing index", value=True)
+
     if st.button("Index Documents", disabled=not uploaded_files):
+        if overwrite:
+            clear_vectorstore()
+            if os.path.exists(RAW_DIR):
+                import shutil
+                shutil.rmtree(RAW_DIR)
+            st.session_state.messages = []
+            st.session_state.pop("qa_chain", None)
+            
         os.makedirs(RAW_DIR, exist_ok=True)
         progress = st.progress(0)
         for i, f in enumerate(uploaded_files):
@@ -551,9 +561,18 @@ with st.sidebar:
             progress.progress((i + 1) / len(uploaded_files))
         st.success(f"Indexed {len(uploaded_files)} file(s).")
         st.session_state.pop("qa_chain", None)
+        st.rerun()
 
     if vectorstore_exists():
         st.info("Vector index is ready.")
+        if st.button("Clear Index & Chat"):
+            clear_vectorstore()
+            if os.path.exists(RAW_DIR):
+                import shutil
+                shutil.rmtree(RAW_DIR)
+            st.session_state.messages = []
+            st.session_state.pop("qa_chain", None)
+            st.rerun()
     else:
         st.warning("No index yet — upload and index a document first.")
 

@@ -1,12 +1,18 @@
 from langchain_ollama import ChatOllama
-from langchain.chains import RetrievalQA
-from langchain.prompts import PromptTemplate
+from langchain_classic.chains import RetrievalQA
+from langchain_core.prompts import PromptTemplate
 from langchain_community.vectorstores import FAISS
 
 from config import OLLAMA_BASE_URL, LLM_MODEL, TOP_K
 
-PROMPT_TEMPLATE = """Use the following context to answer the question. If the answer is not
-in the context, say "I don't have enough information to answer that."
+PROMPT_TEMPLATE = """You are a helpful assistant designed to answer questions about the provided documents.
+
+Guidelines:
+1. Thoroughly analyze the Context below.
+2. Answer the Question directly and clearly using the information in the Context.
+3. If the answer is not explicitly stated but there is related information in the context, synthesize a helpful response using that related information and explain the connection.
+4. If the context does not contain the answer at all, explain what topics are covered in the context and provide a helpful answer using your general knowledge, while clearly stating that the information is from your general knowledge and not the uploaded documents.
+5. Provide detailed context and explanations to make the answer easy to understand for someone who has not read the documents.
 
 Context:
 {context}

@@ -1,4 +1,4 @@
-from langchain_ollama import ChatOllama
+import os
 from langchain_classic.chains import RetrievalQA
 from langchain_core.prompts import PromptTemplate
 from langchain_community.vectorstores import FAISS
@@ -23,11 +23,21 @@ Answer:"""
 
 
 def build_qa_chain(vectorstore: FAISS) -> RetrievalQA:
-    llm = ChatOllama(
-        base_url=OLLAMA_BASE_URL,
-        model=LLM_MODEL,
-        temperature=0,
-    )
+    api_key = os.getenv("GEMINI_API_KEY")
+    if api_key:
+        from langchain_google_genai import ChatGoogleGenerativeAI
+        llm = ChatGoogleGenerativeAI(
+            model="gemini-1.5-flash",
+            google_api_key=api_key,
+            temperature=0,
+        )
+    else:
+        from langchain_ollama import ChatOllama
+        llm = ChatOllama(
+            base_url=OLLAMA_BASE_URL,
+            model=LLM_MODEL,
+            temperature=0,
+        )
     prompt = PromptTemplate(
         template=PROMPT_TEMPLATE,
         input_variables=["context", "question"],
